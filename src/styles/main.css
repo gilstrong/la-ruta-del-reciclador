@@ -47,8 +47,80 @@ nav ul li a:hover {
     background-color: #45a049;
     border-radius: 5px;
 }
+.hero       {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    flex: 1 1 calc(30% - 20px); /* Que cada uno ocupe un 30% más o menos */
+    text-align: center;
+    transition: transform 0.3s;
+}
 
+.hero:hover {
+    transform: translateY(-5px);
+}
+
+/* Títulos dentro de cada Feature */
+.hero h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Texto dentro de cada Feature */
+.hero p {
+    color: #666;
+    font-size: 16px;
+}
 /* Estilo de las secciones */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Sección Features */
+.features {
+    background-color: #f9f9f9;
+    padding: 50px 0;
+}
+
+.features .container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Para que se acomode bonito en pantallas pequeñas */
+    gap: 20px; /* Espacio entre los feature cards */
+}
+
+/* Cada Feature en su tarjetita */
+.feature {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    flex: 1 1 calc(30% - 20px); /* Que cada uno ocupe un 30% más o menos */
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+/* Animación cuando pasas el mouse */
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+/* Títulos dentro de cada Feature */
+.feature h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Texto dentro de cada Feature */
+.feature p {
+    color: #666;
+    font-size: 16px;
+}
+
 main {
     padding: 30px 10%;
 }
