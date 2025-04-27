@@ -61,6 +61,53 @@ nav ul li a:hover {
     transform: translateY(-5px);
 }
 
+.intro {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 50px;
+    background-color: #ecf0f1;
+  }
+  
+  .intro-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 30%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    margin: 10px;
+  }
+  
+  .intro-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .intro-card h1, .intro-card h2 {
+    color: #2980b9;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+  }
+  
+  .intro-card p {
+    color: #34495e;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+  
+  /* Estilo para la responsividad */
+  @media (max-width: 768px) {
+    .intro-card {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+
 /* Títulos dentro de cada Feature */
 .hero h2 {
     margin-bottom: 10px;
