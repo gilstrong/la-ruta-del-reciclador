@@ -64,11 +64,13 @@ nav ul li a:hover {
 }
 
 .registro-btn-container {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* separación entre botones */
   margin-top: 20px;
 }
 
-.registro-btn button {
+.registro-btn {
   background-color: #28a745;
   color: white;
   font-size: 25px;
@@ -79,7 +81,28 @@ nav ul li a:hover {
   transition: background-color 0.3s ease;
 }
 
-.registro-btn button:hover {
+.registro-btn:hover {
+  background-color: #218838;
+}
+
+
+.login-btn-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-btn button {
+  background-color: #28a745;
+  color: white;
+  font-size: 25px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn button:hover {
   background-color: #218838;
 }
 
