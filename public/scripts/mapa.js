@@ -6,19 +6,31 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+// Obtener el nombre del usuario desde la URL
+const urlParams = new URLSearchParams(window.location.search);
+const nombreUsuario = urlParams.get('nombre');
+
+// Mostrar el nombre del usuario en algún lugar de la interfaz (opcional)
+document.getElementById('nombreUsuario').textContent = nombreUsuario;
+
+
 // Lista para guardar los marcadores
 const marcadores = [];
 
 // Función para crear un marcador que se puede borrar
 function crearMarcador(lat, lng) {
   const marcador = L.marker([lat, lng]).addTo(map)
-    .bindPopup('¡Aquí tengo material para reciclar!')
-    .openPopup();
+    .bindPopup('¡Aquí tengo material para reciclar!');
 
   marcadores.push(marcador); // Guardar el marcador en la lista
 
   // Guardar la ubicación en el servidor cuando se agrega un marcador
   guardarUbicacionEnServidor(lat, lng);
+
+  // Llamar a la función para sumar un punto al usuario cuando se agrega un marcador
+  const nombreUsuario = 'Juan'; // Aquí puedes poner el nombre dinámicamente del usuario
+  console.log(`Sumando punto al usuario ${nombreUsuario}`);
+  sumarPunto(nombreUsuario); // Llama a la función para sumar el punto al usuario
 
   // Evento para eliminar marcador individualmente
   marcador.on('contextmenu', function() {
@@ -121,3 +133,26 @@ document.getElementById('btnBorrarTodo').addEventListener('click', () => {
     marcadores.length = 0; // Vaciar la lista
   }
 });
+
+// Función para sumar puntos al usuario
+async function sumarPunto(nombre) {
+  try {
+    const response = await fetch('http://localhost:3000/sumar-punto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nombre }), // Enviar el nombre del usuario
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log('Punto sumado con éxito:', data);
+      alert(`¡Punto sumado! Ahora tienes ${data.usuario.puntos} puntos.`);
+    } else {
+      console.error('Error:', data.error);
+    }
+  } catch (error) {
+    console.error('Error al sumar el punto:', error);
+  }
+}
