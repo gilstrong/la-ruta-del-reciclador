@@ -63,6 +63,28 @@ nav ul li a:hover {
   transform: translateY(-5px);
 }
 
+.registro-btn-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.registro-btn button {
+  background-color: #28a745;
+  color: white;
+  font-size: 25px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.registro-btn button:hover {
+  background-color: #218838;
+}
+
+
+
 /* Estilo para la introducción */
 .intro {
   display: flex;

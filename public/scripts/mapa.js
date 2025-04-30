@@ -6,14 +6,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Obtener el nombre del usuario desde la URL
-const urlParams = new URLSearchParams(window.location.search);
-const nombreUsuario = urlParams.get('nombre');
-
-// Mostrar el nombre del usuario en algún lugar de la interfaz (opcional)
-document.getElementById('nombreUsuario').textContent = nombreUsuario;
-
-
 // Lista para guardar los marcadores
 const marcadores = [];
 

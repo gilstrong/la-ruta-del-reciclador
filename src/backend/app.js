@@ -21,6 +21,7 @@ app.use('/styles', express.static(path.join(__dirname, '..', 'styles')));
 app.use('/scripts', express.static(path.join(__dirname, '..', '..', 'public', 'scripts')));
 
 // Rutas de páginas
+// Rutas de páginas
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'index.html'));
 });
@@ -29,12 +30,21 @@ app.get('/mapa', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'mapa.html'));
 });
 
+// Ruta para la página de registro
+app.get('/registro', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'registro.html'));
+});
+
 app.get('/index.html', (req, res) => {
   res.redirect('/');
 });
 
 app.get('/mapa.html', (req, res) => {
   res.redirect('/mapa');
+});
+
+app.get('/registro.html', (req, res) => {
+  res.redirect('/registro');
 });
 
 // Ruta para registrar al usuario
