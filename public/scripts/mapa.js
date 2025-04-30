@@ -17,6 +17,9 @@ function crearMarcador(lat, lng) {
 
   marcadores.push(marcador); // Guardar el marcador en la lista
 
+  // Guardar la ubicación en el servidor cuando se agrega un marcador
+  guardarUbicacionEnServidor(lat, lng);
+
   // Evento para eliminar marcador individualmente
   marcador.on('contextmenu', function() {
     if (confirm('¿Seguro que quieres eliminar este punto de reciclaje?')) {
@@ -25,9 +28,64 @@ function crearMarcador(lat, lng) {
       if (index > -1) {
         marcadores.splice(index, 1);
       }
+      // Aquí también puedes enviar una solicitud al servidor para eliminarlo de la base de datos
+      eliminarUbicacionEnServidor(lat, lng);
     }
   });
 }
+
+// Función para guardar la ubicación en el servidor
+function guardarUbicacionEnServidor(lat, lng) {
+  fetch('/api/guardar-ubicacion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ lat, lng })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Ubicación guardada correctamente', data);
+  })
+  .catch(error => {
+    console.error('Error al guardar ubicación:', error);
+  });
+}
+
+// Función para eliminar la ubicación del servidor
+function eliminarUbicacionEnServidor(lat, lng) {
+  fetch('/api/eliminar-ubicacion', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ lat, lng })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Ubicación eliminada correctamente', data);
+  })
+  .catch(error => {
+    console.error('Error al eliminar ubicación:', error);
+  });
+}
+
+// Función para cargar los puntos de reciclaje desde el servidor
+function cargarPuntosDeReciclaje() {
+  fetch('/api/cargar-puntos')
+    .then(response => response.json())
+    .then(puntos => {
+      puntos.forEach(punto => {
+        crearMarcador(punto.lat, punto.lng); // Crear un marcador por cada punto
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar puntos:', error);
+    });
+}
+
+// Llamar a la función para cargar los puntos cuando la página se carga
+window.onload = cargarPuntosDeReciclaje;
 
 // Evento para agregar marcador manual haciendo click en el mapa
 map.on('click', function(e) {
@@ -56,6 +114,9 @@ document.getElementById('btnBorrarTodo').addEventListener('click', () => {
   if (confirm('¿Seguro que quieres eliminar TODOS los puntos de reciclaje?')) {
     marcadores.forEach(marcador => {
       map.removeLayer(marcador);
+      // También eliminar del servidor
+      const { lat, lng } = marcador.getLatLng();
+      eliminarUbicacionEnServidor(lat, lng);
     });
     marcadores.length = 0; // Vaciar la lista
   }
