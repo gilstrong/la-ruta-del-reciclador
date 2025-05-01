@@ -111,20 +111,59 @@ app.post('/sumar-punto', async (req, res) => {
 // Ruta para ver el perfil del usuario con puntos
 // Ruta API para ver el perfil del usuario con puntos
 app.get('/api/perfil/:nombre', async (req, res) => {
-  const nombreNormalizado = req.params.nombre.toLowerCase();
+  const nombreNormalizado = req.params.nombre.toLowerCase(); // Normaliza el nombre a minúsculas
+
+  try {
+    // Busca al usuario por nombre normalizado
+    let usuario = await Usuario.findOne({ nombre: nombreNormalizado });
+
+    // Si el usuario no existe, lo crea con 0 puntos
+    if (!usuario) {
+      usuario = new Usuario({ nombre: nombreNormalizado, puntos: 0 });
+      await usuario.save(); // Guarda el nuevo usuario
+    }
+
+    // Devuelve el perfil del usuario con los puntos
+    res.json({
+      nombre: usuario.nombre,
+      puntos: usuario.puntos
+    });
+  } catch (error) {
+    // Si hay un error, responde con un mensaje adecuado
+    console.error('Error al obtener el perfil:', error);
+    res.status(500).json({ error: 'Error al obtener perfil' });
+  }
+});
+
+
+// Ruta para el login
+// Ruta para el login
+app.post('/api/login', async (req, res) => {
+  const { nombre } = req.body;
+
+  if (!nombre) {
+    return res.status(400).json({ error: 'El nombre de usuario es obligatorio' });
+  }
+
+  const nombreNormalizado = nombre.toLowerCase();
 
   try {
     let usuario = await Usuario.findOne({ nombre: nombreNormalizado });
 
     if (!usuario) {
-      usuario = await Usuario.create({ nombre: nombreNormalizado, puntos: 0 });
+      return res.status(404).json({ error: 'El usuario no está registrado' });
     }
 
-    res.json(usuario); // Devuelve el perfil con los puntos
+    // Si el usuario existe, devuelve un mensaje de éxito
+    res.status(200).json({ mensaje: 'Usuario encontrado, inicio de sesión exitoso' });
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener perfil' });
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ error: 'Hubo un problema con el inicio de sesión' });
   }
 });
+
+
+
 
 
 // Iniciar servidor

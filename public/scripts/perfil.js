@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  // Obtener el nombre desde localStorage
   const nombre = localStorage.getItem('usuario');
 
   if (!nombre) {
@@ -8,7 +9,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const respuesta = await fetch(`/api/perfil/${nombre}`);
+    // Llama a la API con el nombre almacenado
+    const respuesta = await fetch(`/api/perfil/${nombre.toLowerCase()}`);
     const datos = await respuesta.json();
 
     if (datos.error) {
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // Actualiza el DOM con los datos del usuario
     document.getElementById('nombreUsuario').textContent = datos.nombre;
     document.getElementById('puntosUsuario').textContent = datos.puntos;
 
