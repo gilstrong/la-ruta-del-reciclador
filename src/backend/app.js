@@ -65,19 +65,15 @@ app.post('/api/registrar-usuario', async (req, res) => {
   }
 
   try {
-    // Buscar al usuario por nombre en minúsculas para evitar problemas con mayúsculas/minúsculas
-    let usuario = await Usuario.findOne({ nombre: nombre.toLowerCase() });
+    const nombreNormalizado = nombre.toLowerCase();
+    let usuario = await Usuario.findOne({ nombre: nombreNormalizado });
 
     if (usuario) {
-      // Si el usuario ya existe, reiniciar los puntos
-      usuario.puntos = 0; // Reiniciar los puntos
-      await usuario.save(); // Guardar los cambios
-      return res.status(200).json({ mensaje: 'El usuario ya está registrado, pero los puntos han sido reiniciados' });
+      return res.status(400).json({ error: 'El nombre de usuario ya está registrado' });
     }
 
-    // Si el usuario no existe, crear uno nuevo
-    usuario = new Usuario({ nombre: nombre.toLowerCase(), puntos: 0 });
-    await usuario.save(); // Guardar el nuevo usuario
+    usuario = new Usuario({ nombre: nombreNormalizado, puntos: 0 });
+    await usuario.save();
 
     res.status(201).json({ mensaje: 'Usuario registrado con éxito' });
   } catch (error) {
@@ -85,6 +81,7 @@ app.post('/api/registrar-usuario', async (req, res) => {
     res.status(500).json({ error: 'Error al registrar el usuario' });
   }
 });
+
 
 // Ruta para sumar punto
 app.post('/sumar-punto', async (req, res) => {
