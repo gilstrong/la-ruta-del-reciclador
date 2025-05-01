@@ -20,6 +20,19 @@ mongoose.connect('mongodb://127.0.0.1:27017/rutaReciclador', {
 app.use('/styles', express.static(path.join(__dirname, '..', 'styles')));
 app.use('/scripts', express.static(path.join(__dirname, '..', '..', 'public', 'scripts')));
 
+
+
+// Ruta para servir perfil.html
+
+app.get('/perfil.html', (req, res) => {
+  res.redirect('/perfil');
+});
+
+// Servir la página perfil.html en /perfil
+app.get('/perfil', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'pages', 'perfil.html'));
+});
+
 // Rutas de páginas
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'pages', 'index.html'));
@@ -98,8 +111,9 @@ app.post('/sumar-punto', async (req, res) => {
   }
 });
 
-// Ruta para ver perfil
-app.get('/perfil/:nombre', async (req, res) => {
+// Ruta para ver el perfil del usuario con puntos
+// Ruta API para ver el perfil del usuario con puntos
+app.get('/api/perfil/:nombre', async (req, res) => {
   const nombreNormalizado = req.params.nombre.toLowerCase();
 
   try {
@@ -109,12 +123,12 @@ app.get('/perfil/:nombre', async (req, res) => {
       usuario = await Usuario.create({ nombre: nombreNormalizado, puntos: 0 });
     }
 
-    res.json(usuario);
-
+    res.json(usuario); // Devuelve el perfil con los puntos
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener perfil' });
   }
 });
+
 
 // Iniciar servidor
 const port = 3000;

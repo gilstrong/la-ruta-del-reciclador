@@ -21,7 +21,8 @@ document.getElementById('registroForm').addEventListener('submit', async functio
 
     if (response.ok) {
       localStorage.setItem("usuario", nombre); // ✅ Guardar en localStorage
-      window.location.href = `/mapa.html?nombre=${nombre}`;
+      window.location.href = `/perfil?nombre=${nombre}`; // 🔁 Redirigir al perfil
+    }
     } else {
       alert(data.error || 'Hubo un error al registrar el usuario. Intenta nuevamente.');
     }

@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Usuario</title>
-    <link rel="stylesheet" href="/styles/style.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil del Usuario</title>
+  <link rel="stylesheet" href="/styles/perfil.css"> <!-- Ruta CSS -->
+  <script defer src="/scripts/perfil.js"></script> <!-- Ruta JS -->
 </head>
+
 <body>
 
-    <header>
-        <h1>Perfil de Usuario</h1>
-    </header>
+  <!-- Contenedor principal del perfil -->
+  <div class="perfil-container">
+    <!-- Fondo sutil -->
+    <div class="perfil-fondo"></div>
 
-    <div id="perfil">
-        <p><strong>Nombre:</strong> <span id="nombreUsuario"></span></p>
-        <p><strong>Puntos:</strong> <span id="puntosUsuario"></span></p>
-        <button id="sumarPunto">Sumar un punto</button>
+    <div class="perfil-form">
+      <!-- Título del perfil -->
+      <h1>Perfil de Usuario</h1>
+
+      <!-- Muestra el nombre del usuario -->
+      <div class="perfil-datos">
+        <h2 id="nombreUsuario" class="perfil-title">Cargando...</h2>
+      </div>
+
+      <!-- Muestra los puntos del usuario -->
+      <div class="perfil-datos">
+        <p>Puntos: <span id="puntosUsuario">Cargando...</span></p>
+      </div>
+
+      <!-- Enlace para regresar al mapa -->
+      <a href="/mapa" class="perfil-btn">Volver al Mapa</a>
     </div>
+  </div>
 
-    <footer>
-        <p>© 2025 La Ruta del Reciclador</p>
-    </footer>
-
-    <script src="/scripts/perfil.js"></script>
 </body>
+
 </html>
