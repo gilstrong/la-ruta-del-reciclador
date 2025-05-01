@@ -19,10 +19,11 @@ function crearMarcador(lat, lng) {
   // Guardar la ubicación en el servidor cuando se agrega un marcador
   guardarUbicacionEnServidor(lat, lng);
 
-  // Llamar a la función para sumar un punto al usuario cuando se agrega un marcador
-  const nombreUsuario = 'Juan'; // Aquí puedes poner el nombre dinámicamente del usuario
-  console.log(`Sumando punto al usuario ${nombreUsuario}`);
-  sumarPunto(nombreUsuario); // Llama a la función para sumar el punto al usuario
+// Llamar a la función para sumar un punto al usuario cuando se agrega un marcador
+const nombreUsuario = localStorage.getItem("usuario"); // ✅ Toma el nombre del usuario registrado
+console.log(`Sumando punto al usuario ${nombreUsuario}`);
+sumarPunto(nombreUsuario); // Llama a la función para sumar el punto al usuario
+
 
   // Evento para eliminar marcador individualmente
   marcador.on('contextmenu', function() {

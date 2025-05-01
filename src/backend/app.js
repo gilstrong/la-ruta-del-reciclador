@@ -12,13 +12,14 @@ app.use(express.json());
 mongoose.connect('mongodb://127.0.0.1:27017/rutaReciclador', {
   useNewUrlParser: true,
   useUnifiedTopology: true
-})
-.then(() => console.log('✅ Conectado a MongoDB'))
+}).then(() => console.log('✅ Conectado a MongoDB'))
 .catch(err => console.error('❌ Error conectando a MongoDB:', err));
+
 
 // Servir archivos estáticos
 app.use('/styles', express.static(path.join(__dirname, '..', 'styles')));
 app.use('/scripts', express.static(path.join(__dirname, '..', '..', 'public', 'scripts')));
+
 
 // Rutas de páginas
 // Rutas de páginas
@@ -83,21 +84,28 @@ app.post('/sumar-punto', async (req, res) => {
   }
 
   try {
+    // Buscar al usuario por nombre, este valor es dinámico
     let usuario = await Usuario.findOne({ nombre });
 
+    // Si no existe el usuario, lo creamos con 0 puntos (o con 1 si prefieres)
     if (!usuario) {
       usuario = new Usuario({ nombre, puntos: 1 });
     } else {
+      // Si el usuario existe, sumamos un punto a su total
       usuario.puntos += 1;
     }
 
+    // Guardamos al usuario con los puntos actualizados
     await usuario.save();
+
     res.json({ mensaje: 'Punto sumado con éxito', usuario });
   } catch (error) {
     console.error('Error al guardar el punto:', error);
     res.status(500).json({ error: 'Error del servidor' });
   }
 });
+
+
 
 // Ruta para ver perfil
 app.get('/perfil/:nombre', async (req, res) => {

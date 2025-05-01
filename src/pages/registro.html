@@ -3,47 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registro</title>
+  <title>Registro | La Ruta del Reciclador</title>
   <link rel="stylesheet" href="../styles/registro.css" />
 </head>
 <body>
   <div class="registro-container">
     <div class="registro-fondo"></div>
 
-    <div class="registro-form">
-      <h1>Regístrate</h1>
-      <form id="formRegistro">
-        <input type="text" id="nombre" placeholder="Ingresa tu nombre" required />
-        <button type="submit">Registrarme</button>
-        <p id="mensajeError" style="color: red;"></p>
-      </form>
-      <a href="/">Volver al inicio</a>
-    </div>
+    <form id="registroForm" class="registro-form">
+      <h1>Registro</h1>
+      <input type="text" id="nombre" placeholder="Tu nombre" required />
+      <button type="submit">Registrarme</button>
+    </form>
   </div>
 
   <script>
-    document.getElementById('formRegistro').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    
+    const form = document.getElementById('registroForm');
 
-      const nombre = document.getElementById('nombre').value;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+
+      if (!nombre) {
+        alert("Por favor, ingresa tu nombre.");
+        return;
+      }
 
       try {
-        const respuesta = await fetch('/api/registrar-usuario', {
+        const res = await fetch('/api/registrar-usuario', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre }),
+          body: JSON.stringify({ nombre })
         });
 
-        const data = await respuesta.json();
+        const data = await res.json();
 
-        if (respuesta.ok) {
-          window.location.href = `/mapa?nombre=${encodeURIComponent(nombre)}`;
+        if (res.ok) {
+          localStorage.setItem('usuario', nombre);
+          alert("Registro exitoso. Bienvenido " + nombre + "!");
+          window.location.href = 'mapa.html'; // redirige al mapa
         } else {
-          document.getElementById('mensajeError').textContent = data.error || 'Error al registrar.';
+          alert(data.error || "Error al registrar el usuario.");
         }
       } catch (error) {
-        document.getElementById('mensajeError').textContent = 'Error de conexión con el servidor.';
-        console.error('Error al registrar:', error);
+        console.error("Error de red:", error);
+        alert("Hubo un error al conectar con el servidor.");
       }
     });
   </script>
