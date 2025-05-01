@@ -3,20 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registro | La Ruta del Reciclador</title>
+  <title>Registro</title>
   <link rel="stylesheet" href="../styles/registro.css" />
 </head>
 <body>
   <div class="registro-container">
     <div class="registro-fondo"></div>
 
-<<<<<<< HEAD
-    <form id="registroForm" class="registro-form">
-      <h1>Registro</h1>
-      <input type="text" id="nombre" placeholder="Tu nombre" required />
-      <button type="submit">Registrarme</button>
-    </form>
-=======
     <div class="registro-form">
       <h1>Regístrate</h1>
       <form id="formRegistro">
@@ -24,43 +17,37 @@
         <button type="submit">Registrarme</button>
         <p id="mensajeError" style="color: red;"></p>
       </form>
-      <a href="index.html">Volver al inicio</a>
+      <a href="/">Volver al inicio</a>
     </div>
->>>>>>> cf1008074ca414e5d6a49b118ee29f39cf00a014
   </div>
 
   <script>
-    
-    const form = document.getElementById('registroForm');
+    // Este es el código JavaScript que envía el formulario de registro al backend
+    document.getElementById('formRegistro').addEventListener('submit', async function (e) {
+      e.preventDefault();  // Evita que el formulario se envíe de manera tradicional
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nombre = document.getElementById('nombre').value.trim();
-
-      if (!nombre) {
-        alert("Por favor, ingresa tu nombre.");
-        return;
-      }
+      const nombre = document.getElementById('nombre').value.trim().toLowerCase(); // Tomamos el nombre en minúsculas
 
       try {
-        const res = await fetch('/api/registrar-usuario', {
+        const respuesta = await fetch('/api/registrar-usuario', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre })
+          body: JSON.stringify({ nombre }), // Enviar el nombre al backend
         });
 
-        const data = await res.json();
+        const data = await respuesta.json();
 
-        if (res.ok) {
-          localStorage.setItem('usuario', nombre);
-          alert("Registro exitoso. Bienvenido " + nombre + "!");
-          window.location.href = 'mapa.html'; // redirige al mapa
+        if (respuesta.ok) {
+          // Si el registro es exitoso, redirigir al mapa con el nombre del usuario
+          window.location.href = `/mapa?nombre=${encodeURIComponent(nombre)}`;
         } else {
-          alert(data.error || "Error al registrar el usuario.");
+          // Mostrar mensaje de error si no se pudo registrar
+          document.getElementById('mensajeError').textContent = data.error || 'Error al registrar.';
         }
       } catch (error) {
-        console.error("Error de red:", error);
-        alert("Hubo un error al conectar con el servidor.");
+        // Si hay un error de conexión, mostrar mensaje de error
+        document.getElementById('mensajeError').textContent = 'Error de conexión con el servidor.';
+        console.error('Error al registrar:', error);
       }
     });
   </script>

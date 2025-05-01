@@ -1,3 +1,18 @@
+// Guardar nombre del usuario desde la URL (si existe)
+const params = new URLSearchParams(window.location.search);
+const nombreDesdeUrl = params.get('nombre');
+if (nombreDesdeUrl) {
+  localStorage.setItem("usuario", nombreDesdeUrl);
+}
+
+// Obtener el nombre del usuario desde localStorage
+const nombreUsuario = localStorage.getItem("usuario");
+
+// Verificar que el usuario esté definido
+if (!nombreUsuario) {
+  alert("No se detectó un usuario válido. Por favor vuelve a iniciar sesión.");
+}
+
 // Crear el mapa centrado en Villa Juana (aproximadamente)
 const map = L.map('map').setView([18.4861, -69.9312], 16);
 
@@ -19,21 +34,20 @@ function crearMarcador(lat, lng) {
   // Guardar la ubicación en el servidor cuando se agrega un marcador
   guardarUbicacionEnServidor(lat, lng);
 
-// Llamar a la función para sumar un punto al usuario cuando se agrega un marcador
-const nombreUsuario = localStorage.getItem("usuario"); // ✅ Toma el nombre del usuario registrado
-console.log(`Sumando punto al usuario ${nombreUsuario}`);
-sumarPunto(nombreUsuario); // Llama a la función para sumar el punto al usuario
-
+  // Sumar punto al usuario (si hay nombre válido)
+  if (nombreUsuario) {
+    console.log(`Sumando punto al usuario ${nombreUsuario}`);
+    sumarPunto(nombreUsuario);
+  }
 
   // Evento para eliminar marcador individualmente
-  marcador.on('contextmenu', function() {
+  marcador.on('contextmenu', function () {
     if (confirm('¿Seguro que quieres eliminar este punto de reciclaje?')) {
       map.removeLayer(marcador);
       const index = marcadores.indexOf(marcador);
       if (index > -1) {
         marcadores.splice(index, 1);
       }
-      // Aquí también puedes enviar una solicitud al servidor para eliminarlo de la base de datos
       eliminarUbicacionEnServidor(lat, lng);
     }
   });
@@ -43,57 +57,43 @@ sumarPunto(nombreUsuario); // Llama a la función para sumar el punto al usuario
 function guardarUbicacionEnServidor(lat, lng) {
   fetch('/api/guardar-ubicacion', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lat, lng })
   })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Ubicación guardada correctamente', data);
-  })
-  .catch(error => {
-    console.error('Error al guardar ubicación:', error);
-  });
+    .then(res => res.json())
+    .then(data => console.log('Ubicación guardada:', data))
+    .catch(error => console.error('Error al guardar ubicación:', error));
 }
 
 // Función para eliminar la ubicación del servidor
 function eliminarUbicacionEnServidor(lat, lng) {
   fetch('/api/eliminar-ubicacion', {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lat, lng })
   })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Ubicación eliminada correctamente', data);
-  })
-  .catch(error => {
-    console.error('Error al eliminar ubicación:', error);
-  });
+    .then(res => res.json())
+    .then(data => console.log('Ubicación eliminada:', data))
+    .catch(error => console.error('Error al eliminar ubicación:', error));
 }
 
-// Función para cargar los puntos de reciclaje desde el servidor
+// Cargar los puntos guardados desde el servidor
 function cargarPuntosDeReciclaje() {
   fetch('/api/cargar-puntos')
-    .then(response => response.json())
+    .then(res => res.json())
     .then(puntos => {
       puntos.forEach(punto => {
-        crearMarcador(punto.lat, punto.lng); // Crear un marcador por cada punto
+        crearMarcador(punto.lat, punto.lng);
       });
     })
-    .catch(error => {
-      console.error('Error al cargar puntos:', error);
-    });
+    .catch(error => console.error('Error al cargar puntos:', error));
 }
 
-// Llamar a la función para cargar los puntos cuando la página se carga
+// Llamar a la función al cargar la página
 window.onload = cargarPuntosDeReciclaje;
 
-// Evento para agregar marcador manual haciendo click en el mapa
-map.on('click', function(e) {
+// Evento para agregar marcador manual haciendo clic en el mapa
+map.on('click', function (e) {
   const { lat, lng } = e.latlng;
   crearMarcador(lat, lng);
 });
@@ -101,12 +101,12 @@ map.on('click', function(e) {
 // Botón para agregar la ubicación actual del usuario
 document.getElementById('btnUbicacion').addEventListener('click', () => {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(function (position) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       crearMarcador(lat, lng);
       map.setView([lat, lng], 17);
-    }, function() {
+    }, function () {
       alert('No se pudo obtener tu ubicación.');
     });
   } else {
@@ -119,11 +119,10 @@ document.getElementById('btnBorrarTodo').addEventListener('click', () => {
   if (confirm('¿Seguro que quieres eliminar TODOS los puntos de reciclaje?')) {
     marcadores.forEach(marcador => {
       map.removeLayer(marcador);
-      // También eliminar del servidor
       const { lat, lng } = marcador.getLatLng();
       eliminarUbicacionEnServidor(lat, lng);
     });
-    marcadores.length = 0; // Vaciar la lista
+    marcadores.length = 0;
   }
 });
 
@@ -132,18 +131,17 @@ async function sumarPunto(nombre) {
   try {
     const response = await fetch('http://localhost:3000/sumar-punto', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nombre }), // Enviar el nombre del usuario
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre })
     });
 
     const data = await response.json();
+
     if (response.ok) {
-      console.log('Punto sumado con éxito:', data);
+      console.log('Punto sumado:', data);
       alert(`¡Punto sumado! Ahora tienes ${data.usuario.puntos} puntos.`);
     } else {
-      console.error('Error:', data.error);
+      console.error('Error al sumar punto:', data.error);
     }
   } catch (error) {
     console.error('Error al sumar el punto:', error);
