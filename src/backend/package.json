@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",  // Inicia el servidor
+    "build": "echo 'No build step needed for backend'"  // Si no necesitas un paso de compilación para tu backend
   },
   "keywords": [],
   "author": "",

@@ -20,8 +20,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/rutaReciclador', {
 app.use('/styles', express.static(path.join(__dirname, '..', 'styles')));
 app.use('/scripts', express.static(path.join(__dirname, '..', '..', 'public', 'scripts')));
 
-
-
 // Ruta para servir perfil.html
 
 app.get('/perfil.html', (req, res) => {
@@ -162,6 +160,16 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Ruta para obtener el ranking de usuarios por puntos
+app.get('/api/ranking', async (req, res) => {
+  try {
+    const ranking = await Usuario.find().sort({ puntos: -1 }).limit(10); // Obtener los 10 usuarios con más puntos
+    res.json(ranking);
+  } catch (error) {
+    console.error('Error al obtener el ranking:', error);
+    res.status(500).json({ error: 'Error al obtener el ranking' });
+  }
+});
 
 
 
