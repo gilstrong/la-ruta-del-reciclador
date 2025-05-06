@@ -3,18 +3,22 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",  // Inicia el servidor en modo desarrollo
-    "start": "node app.js",  // Inicia el servidor
-    "build": "echo 'No build step needed for backend'"  // Si no necesitas un paso de compilación para tu backend
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "build": "echo 'No build step needed for backend'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tensorflow-models/mobilenet": "^2.1.1",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mongoose": "^8.14.1"
+    "jimp": "^1.6.0",
+    "mongoose": "^8.14.1",
+    "node-fetch": "^3.3.2"
   }
-
-  
 }
