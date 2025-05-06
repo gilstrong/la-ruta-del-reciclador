@@ -1,130 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación de Residuos</title>
-    <style>
-        /* Estilos similares al anterior */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .category {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .category div {
-            width: 30%;
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .category div h2 {
-            margin: 0;
-        }
-        .category div p {
-            font-size: 14px;
-            color: #666;
-        }
-        .upload-form {
-            margin-top: 30px;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reconocimiento de Imágenes</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      max-width: 90%;
+      width: 400px;
+    }
+    h1 {
+      color: #4caf50;
+      margin-bottom: 20px;
+    }
+    #mensaje {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #mensaje.exito {
+      color: #4caf50;
+    }
+    #mensaje.error {
+      color: #f44336;
+    }
+    #imagenEntrada {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+    .file-upload-wrapper {
+      margin-top: 20px;
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    .file-upload-wrapper:hover {
+      border-color: #45a049;
+    }
+    input[type="file"] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Clasificación de Residuos</h1>
-
-    <div class="category">
-        <div>
-            <h2>Plástico</h2>
-            <p>Envases, botellas, bolsas, etc. Reciclable mediante el proceso de fundido.</p>
-        </div>
-        <div>
-            <h2>Papel</h2>
-            <p>Cartón, periódicos, revistas. Reciclable al 100% tras el proceso adecuado.</p>
-        </div>
-        <div>
-            <h2>Vidrio</h2>
-            <p>Botellas, frascos, tarros. Reciclable y reutilizable de forma eficiente.</p>
-        </div>
+  <div class="container">
+    <h1>Reconocimiento de Imágenes</h1>
+    <div id="mensaje">Selecciona una imagen para identificar el objeto.</div>
+    <div class="file-upload-wrapper">
+      <span>Seleccionar imagen</span>
+      <input type="file" id="imagenInput" accept="image/*"/>
     </div>
+    <img id="imagenEntrada" src="#" alt="Imagen seleccionada"/>
+    <button id="probarTensorflow" style="display: none;">Procesar Imagen</button>
+  </div>
 
-    <div class="category">
-        <div>
-            <h2>Metales</h2>
-            <p>Latas, envases de aluminio. Reciclables tras el proceso de separación.</p>
-        </div>
-        <div>
-            <h2>Orgánico</h2>
-            <p>Restos de comida, hojas. Biodegradable y utilizado en compostaje.</p>
-        </div>
-        <div>
-            <h2>Residuos Electrónicos</h2>
-            <p>Equipos como celulares, computadoras. Requiere tratamiento especializado.</p>
-        </div>
-    </div>
+  <script>
+    const URL = "/model/";
+    let model, maxPredictions;
 
-    <!-- Formulario de carga de imagen -->
-    <div class="upload-form">
-        <h2>Sube una imagen para clasificar el residuo</h2>
-        <input type="file" id="imagenResiduo" accept="image/*">
-        <button onclick="clasificarImagen()">Clasificar Residuo</button>
-    </div>
-
-</div>
-
-<script>
-    // Función para clasificar la imagen
-    async function clasificarImagen() {
-        const fileInput = document.getElementById('imagenResiduo');
-        const file = fileInput.files[0];
-
-        if (!file) {
-            alert('Por favor selecciona una imagen');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            const response = await fetch('/api/clasificar-residuo', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(`El residuo es clasificado como: ${data.clasificacion}`);
-            } else {
-                alert('Error al clasificar la imagen');
-            }
-        } catch (error) {
-            console.error('Error al procesar la imagen:', error);
-            alert('Hubo un problema al clasificar la imagen');
-        }
+    async function cargarModelo() {
+      model = await tmImage.load(URL + "model.json", URL + "metadata.json");
+      maxPredictions = model.getTotalClasses();
     }
 
-    
-</script>
+    async function predecirConImagen(imagen) {
+      const prediction = await model.predict(imagen, false);
+      prediction.sort((a, b) => b.probability - a.probability);
 
+      const resultado = prediction[0];
+      const mensajeDiv = document.getElementById("mensaje");
+
+      if (resultado.probability > 0.7) {
+        mensajeDiv.textContent = `Detectado: ${resultado.className} (${(resultado.probability * 100).toFixed(1)}%)`;
+        mensajeDiv.className = "exito";
+      } else {
+        mensajeDiv.textContent = "No se pudo identificar con certeza.";
+        mensajeDiv.className = "error";
+      }
+    }
+
+    document.getElementById("imagenInput").addEventListener("change", async (event) => {
+      const archivo = event.target.files[0];
+      const img = document.getElementById("imagenEntrada");
+      const boton = document.getElementById("probarTensorflow");
+
+      if (archivo) {
+        const lector = new FileReader();
+        lector.onload = function (e) {
+          img.src = e.target.result;
+          img.style.display = "block";
+        };
+        lector.readAsDataURL(archivo);
+
+        boton.style.display = "inline-block";
+
+        if (!model) await cargarModelo(); // Cargar una sola vez
+      }
+    });
+
+    document.getElementById("probarTensorflow").addEventListener("click", async () => {
+      const imagen = document.getElementById("imagenEntrada");
+      if (model && imagen.complete) {
+        await predecirConImagen(imagen);
+      }
+    });
+  </script>
 </body>
 </html>
